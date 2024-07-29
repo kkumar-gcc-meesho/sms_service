@@ -1,9 +1,8 @@
 package com.example.notification.dto;
 
+import com.example.notification.annotations.PhoneNumber;
 import com.example.notification.enums.SMSStatus;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.Date;
@@ -17,8 +16,7 @@ public class SMSDto {
 
     private Long id;
 
-    @NotBlank(message = "The phone number is required.")
-    @Pattern(regexp = "^(\\+91)?[6-9]\\d{9}$", message = "The phone number is not valid.")
+    @PhoneNumber
     private String phoneNumber;
 
     @NotNull

@@ -9,6 +9,7 @@ import com.example.notification.models.SMS;
 import com.example.notification.models.SMSDocument;
 import com.example.notification.repositories.elastic.SMSElasticRepository;
 import com.example.notification.repositories.jpa.SMSJpaRepository;
+import com.example.notification.utils.PhoneNumberUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +21,15 @@ import java.util.Date;
 @AllArgsConstructor
 public class SMSServiceImpl implements SMSService {
 
+    private final PhoneNumberUtils phoneNumberUtils = new PhoneNumberUtils();
+
     private final SMSJpaRepository smsJpaRepository;
     private final SMSElasticRepository smsElasticRepository;
 
     @Override
     public SMSDto createSMS(SMSDto smsDto) {
         SMS sms = SMSMapper.toEntity(smsDto);
+        sms.setPhoneNumber(standardizePhoneNumber(sms.getPhoneNumber()));
         SMS savedSMS = smsJpaRepository.save(sms);
         return SMSMapper.toDto(savedSMS);
     }
@@ -62,6 +66,8 @@ public class SMSServiceImpl implements SMSService {
 
     @Override
     public Page<SMSDocumentDto> getSMSDocumentsByPhoneNumberAndDateRange(String phoneNumber, Date startDate, Date endDate, Pageable pageable) {
+        phoneNumber = standardizePhoneNumber(phoneNumber);
+
         Page<SMSDocument> smsDocuments;
 
         if (startDate != null && endDate != null) {
@@ -85,5 +91,15 @@ public class SMSServiceImpl implements SMSService {
     public Page<SMSDocumentDto> getSMSDocumentsByMessageContaining(String text, Pageable pageable) {
         Page<SMSDocument> smsDocuments = smsElasticRepository.findByMessageContaining(text, pageable);
         return smsDocuments.map(SMSDocumentMapper::toDto);
+    }
+
+    private String standardizePhoneNumber(String phoneNumber) {
+        phoneNumberUtils.setPhoneNumber(phoneNumber);
+
+        phoneNumber = phoneNumberUtils.getE164Format();
+
+        phoneNumberUtils.resetPhoneNumber();
+
+        return phoneNumber;
     }
 }

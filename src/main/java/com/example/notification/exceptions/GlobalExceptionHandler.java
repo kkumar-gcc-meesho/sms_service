@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import com.example.notification.responses.ApiResponse;
 import com.example.notification.responses.ErrorResponse;
-import com.example.notification.utils.ErrorResponseUtil;
+import com.example.notification.utils.ErrorResponseUtils;
 import lombok.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleSMSNotFoundException(ResourceNotFoundException ex) {
         Map<String, Object> response = new HashMap<>();
-        response.put("error", ErrorResponseUtil.add(String.valueOf(HttpStatus.NOT_FOUND), ex.getMessage()));
+        response.put("error", ErrorResponseUtils.add(String.valueOf(HttpStatus.NOT_FOUND), ex.getMessage()));
 
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }

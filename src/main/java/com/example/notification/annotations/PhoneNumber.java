@@ -4,20 +4,21 @@ package com.example.notification.annotations;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = { PhoneNumberValidator.class })
+@Target({ElementType.TYPE_USE, ElementType.FIELD, ElementType.TYPE})
 public @interface PhoneNumber {
 
-    String message() default "Field value should be from list of ";
+    String message() default "must be a valid phone number";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    String propName();
-
-    String[] values();
+    String value() default "";
 }

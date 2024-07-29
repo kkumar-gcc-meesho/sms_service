@@ -4,6 +4,7 @@ import com.example.notification.dto.BlacklistDto;
 import com.example.notification.mappers.BlacklistMapper;
 import com.example.notification.models.Blacklist;
 import com.example.notification.repositories.jpa.BlacklistJpaRepository;
+import com.example.notification.utils.PhoneNumberUtils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,6 @@ import redis.clients.jedis.JedisPooled;
 
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,14 +20,14 @@ import java.util.stream.Collectors;
 public class BlacklistServiceImpl implements BlacklistService {
 
     private static final String BLACKLIST_KEY = "sms:phoneNumber:blacklist";
-    private static final String INDIAN_COUNTRY_CODE = "+91";
-    private static final Pattern INTERNATIONAL_PHONE_PATTERN = Pattern.compile("^\\+\\d+");
+    private final PhoneNumberUtils phoneNumberUtils = new PhoneNumberUtils();
 
     private final JedisPooled jedis;
     private final BlacklistJpaRepository blacklistJpaRepository;
 
     @Override
     public void addPhoneNumbersToBlacklist(BlacklistDto blacklistDto) {
+        // TODO: sms should be formated to E164
         List<Blacklist> blacklistEntities = BlacklistMapper.toEntities(blacklistDto);
         blacklistJpaRepository.saveAll(blacklistEntities);
 
@@ -70,12 +69,12 @@ public class BlacklistServiceImpl implements BlacklistService {
     }
 
     private String standardizePhoneNumber(String phoneNumber) {
-        phoneNumber = phoneNumber.trim();
-        Matcher matcher = INTERNATIONAL_PHONE_PATTERN.matcher(phoneNumber);
-        if (matcher.find()) {
-            return phoneNumber;
-        }
+        phoneNumberUtils.setPhoneNumber(phoneNumber);
 
-        return INDIAN_COUNTRY_CODE + phoneNumber;
+        phoneNumber = phoneNumberUtils.getE164Format();
+
+        phoneNumberUtils.resetPhoneNumber();
+
+        return phoneNumber;
     }
 }
