@@ -1,5 +1,6 @@
 package com.example.notification.services.blacklist;
 
+import com.example.notification.config.SMSConfig;
 import com.example.notification.dto.BlacklistDto;
 import com.example.notification.mappers.BlacklistMapper;
 import com.example.notification.models.Blacklist;
@@ -19,11 +20,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class BlacklistServiceImpl implements BlacklistService {
 
-    private static final String BLACKLIST_KEY = "sms:phoneNumber:blacklist";
     private final PhoneNumberUtils phoneNumberUtils = new PhoneNumberUtils();
 
     private final JedisPooled jedis;
     private final BlacklistJpaRepository blacklistJpaRepository;
+    private final SMSConfig smsConfig;
 
     @Override
     public void addPhoneNumbersToBlacklist(BlacklistDto blacklistDto) {
@@ -38,7 +39,7 @@ public class BlacklistServiceImpl implements BlacklistService {
 
         for (String phoneNumber : blacklistDto.getPhoneNumbers()) {
             String standardizedNumber = standardizePhoneNumber(phoneNumber);
-            jedis.sadd(BLACKLIST_KEY, standardizedNumber);
+            jedis.sadd(smsConfig.getRedisBlacklistKey(), standardizedNumber);
         }
     }
 
@@ -46,7 +47,7 @@ public class BlacklistServiceImpl implements BlacklistService {
     public void removePhoneNumbersFromBlacklist(BlacklistDto blacklistDto) {
         for (String phoneNumber : blacklistDto.getPhoneNumbers()) {
             String standardizedNumber = standardizePhoneNumber(phoneNumber);
-            jedis.srem(BLACKLIST_KEY, standardizedNumber);
+            jedis.srem(smsConfig.getRedisBlacklistKey(), standardizedNumber);
         }
 
         List<String> standardizedPhoneNumbers = blacklistDto.getPhoneNumbers().stream()
@@ -59,7 +60,7 @@ public class BlacklistServiceImpl implements BlacklistService {
     @Override
     public boolean isPhoneNumberBlacklisted(String phoneNumber) {
         String standardizedNumber = standardizePhoneNumber(phoneNumber);
-        if (jedis.sismember(BLACKLIST_KEY, standardizedNumber)) {
+        if (jedis.sismember(smsConfig.getRedisBlacklistKey(), standardizedNumber)) {
             return true;
         }
         return blacklistJpaRepository.existsByPhoneNumber(standardizedNumber);
@@ -67,13 +68,18 @@ public class BlacklistServiceImpl implements BlacklistService {
 
     @Override
     public Set<String> getAllBlacklistedPhoneNumbers() {
-        Set<String> phoneNumbers = jedis.smembers(BLACKLIST_KEY);
+        String redisKey = smsConfig.getRedisBlacklistKey();
+
+        Set<String> phoneNumbers = jedis.smembers(redisKey);
         if (phoneNumbers.isEmpty()) {
             List<Blacklist> entities = blacklistJpaRepository.findAll();
             phoneNumbers = entities.stream()
                     .map(Blacklist::getPhoneNumber)
                     .collect(Collectors.toSet());
-            jedis.sadd(BLACKLIST_KEY, phoneNumbers.toArray(new String[0]));
+
+            if (!phoneNumbers.isEmpty()) {
+                jedis.sadd(redisKey, phoneNumbers.toArray(new String[0]));
+            }
         }
         return phoneNumbers;
     }

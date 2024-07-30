@@ -1,5 +1,6 @@
 package com.example.notification.services;
 
+import com.example.notification.config.SMSConfig;
 import com.example.notification.dto.BlacklistDto;
 import com.example.notification.models.Blacklist;
 import com.example.notification.repositories.jpa.BlacklistJpaRepository;
@@ -35,6 +36,9 @@ public class BlacklistServiceTest {
     @Mock
     JedisPooled jedis;
 
+    @Mock
+    private SMSConfig smsConfig;
+
     @InjectMocks
     private BlacklistServiceImpl blacklistServiceImpl;
 
@@ -43,8 +47,8 @@ public class BlacklistServiceTest {
         BlacklistDto blacklistDto = new BlacklistDto();
         blacklistDto.setPhoneNumbers(List.of("+917986543210", "7986543210"));
 
+        when(smsConfig.getRedisBlacklistKey()).thenReturn(BLACKLIST_KEY);
         when(blacklistJpaRepository.saveAll(anyIterable())).thenReturn(any());
-//        when(jedis.sadd(eq(BLACKLIST_KEY), "+917986543210")).thenReturn(1L);
 
         blacklistServiceImpl.addPhoneNumbersToBlacklist(blacklistDto);
 
@@ -58,6 +62,7 @@ public class BlacklistServiceTest {
         blacklistDto.setPhoneNumbers(List.of("+917986543210"));
 
         when(jedis.srem(eq(BLACKLIST_KEY), eq("+917986543210"))).thenReturn(1L);
+        when(smsConfig.getRedisBlacklistKey()).thenReturn(BLACKLIST_KEY);
         doNothing().when(blacklistJpaRepository).removeBlacklistsByPhoneNumberIn(blacklistDto.getPhoneNumbers());
 
         blacklistServiceImpl.removePhoneNumbersFromBlacklist(blacklistDto);
@@ -71,6 +76,7 @@ public class BlacklistServiceTest {
         String phoneNumber = "+917986543210";
 
         when(jedis.sismember(eq(BLACKLIST_KEY), eq(phoneNumber))).thenReturn(true);
+        when(smsConfig.getRedisBlacklistKey()).thenReturn(BLACKLIST_KEY);
 
         boolean isBlacklisted = blacklistServiceImpl.isPhoneNumberBlacklisted(phoneNumber);
 
@@ -84,6 +90,7 @@ public class BlacklistServiceTest {
         String phoneNumber = "+917986543210";
 
         when(jedis.sismember(eq(BLACKLIST_KEY), eq(phoneNumber))).thenReturn(false);
+        when(smsConfig.getRedisBlacklistKey()).thenReturn(BLACKLIST_KEY);
         when(blacklistJpaRepository.existsByPhoneNumber(eq(phoneNumber))).thenReturn(true);
 
         boolean isBlacklisted = blacklistServiceImpl.isPhoneNumberBlacklisted(phoneNumber);
@@ -99,6 +106,7 @@ public class BlacklistServiceTest {
         Set<String> phoneNumbers = Set.of("+917986543210");
 
         when(jedis.smembers(BLACKLIST_KEY)).thenReturn(phoneNumbers);
+        when(smsConfig.getRedisBlacklistKey()).thenReturn(BLACKLIST_KEY);
 
         assertEquals(phoneNumbers, blacklistServiceImpl.getAllBlacklistedPhoneNumbers());
 
@@ -111,8 +119,8 @@ public class BlacklistServiceTest {
         List<Blacklist> blacklists = new ArrayList<>();
         blacklists.add(new Blacklist(1L, "+917986543210"));
 
-
         when(jedis.smembers(BLACKLIST_KEY)).thenReturn(Set.of());
+        when(smsConfig.getRedisBlacklistKey()).thenReturn(BLACKLIST_KEY);
         when(blacklistJpaRepository.findAll()).thenReturn(blacklists);
 
         assertEquals(Set.of("+917986543210"), blacklistServiceImpl.getAllBlacklistedPhoneNumbers());
