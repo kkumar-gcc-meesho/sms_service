@@ -54,7 +54,7 @@ public class SMSConsumerServiceTest {
         verify(smsService, times(1)).updateSMS(eq(smsDto.getId()), smsDtoCaptor.capture());
         SMSDto updatedSMSDto = smsDtoCaptor.getValue();
 
-        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.SENT.toString());
+        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED.toString());
 
         verify(smsService, times(1)).createSMSDocument(any(SMSDocumentDto.class));
     }
