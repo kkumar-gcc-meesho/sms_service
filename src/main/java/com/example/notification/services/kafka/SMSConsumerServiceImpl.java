@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 @AllArgsConstructor
 public class SMSConsumerServiceImpl implements SMSConsumerService {
@@ -47,24 +45,23 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
                     String.valueOf(smsDto.getId())
             ));
 
-           if (response.getStatusCode().is2xxSuccessful()) {
-               smsDto.setStatus(SMSStatus.SENT.toString());
-           } else {
+            if (response != null && response.getStatusCode().is2xxSuccessful()) {
+                smsDto.setStatus(SMSStatus.SENT.toString());
+            } else {
+                smsDto.setStatus(SMSStatus.FAILED.toString());
+                smsDto.setFailureCode(response != null ? response.getStatusCode().value() : 520);
+                smsDto.setFailureComments(response != null && response.getBody() != null ? response.getBody().toString() : "Unknown error");
 
-               logger.error(response.getBody());
-
-               smsDto.setStatus(SMSStatus.FAILED.toString());
-               smsDto.setFailureCode(response.getStatusCode().value());
-               smsDto.setFailureComments(Objects.requireNonNull(response.getBody()).toString());
-           }
+                logger.error(response != null ? response.getBody() : "Response is null");
+            }
 
         } catch (Exception e) {
 
-            logger.error(e);
-
             smsDto.setStatus(SMSStatus.FAILED.toString());
-            smsDto.setFailureCode(-1);
+            smsDto.setFailureCode(520);
             smsDto.setFailureComments(e.getMessage());
+
+            logger.error("Exception occurred while sending SMS", e);
 
         } finally {
 
