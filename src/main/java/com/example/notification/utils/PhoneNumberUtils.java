@@ -19,13 +19,7 @@ public class PhoneNumberUtils {
     private Phonenumber.PhoneNumber phoneNumber;
 
     public PhoneNumberUtils(String phoneNumber) {
-        try {
-            this.phoneNumber = phoneNumberUtil.parse(phoneNumber, defaultRegion);
-        } catch (NumberParseException e) {
-            logger.error(e);
-
-            throw new InvalidPhoneNumberException();
-        }
+        this.setPhoneNumber(phoneNumber);
     }
 
     public String getE164Format() {
