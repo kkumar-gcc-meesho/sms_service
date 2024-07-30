@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE_USE, ElementType.FIELD, ElementType.TYPE})
 public @interface PhoneNumber {
 
-    String message() default "must be a valid phone number";
+    String message() default "invalid phoneNumber";
 
     Class<?>[] groups() default {};
 
