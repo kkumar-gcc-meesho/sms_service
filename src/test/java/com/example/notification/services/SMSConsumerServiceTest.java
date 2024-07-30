@@ -94,7 +94,7 @@ public class SMSConsumerServiceTest {
         SMSDto updatedSMSDto = smsDtoCaptor.getValue();
 
         assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED.toString());
-        assertThat(updatedSMSDto.getFailureCode()).isEqualTo(-1);
+        assertThat(updatedSMSDto.getFailureCode()).isEqualTo(520);
         assertThat(updatedSMSDto.getFailureComments()).isEqualTo("Sending Failed");
 
         verify(smsService, times(1)).createSMSDocument(any(SMSDocumentDto.class));
