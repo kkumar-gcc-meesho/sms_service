@@ -27,8 +27,13 @@ public class BlacklistServiceImpl implements BlacklistService {
 
     @Override
     public void addPhoneNumbersToBlacklist(BlacklistDto blacklistDto) {
-        // TODO: sms should be formated to E164
-        List<Blacklist> blacklistEntities = BlacklistMapper.toEntities(blacklistDto);
+        List<Blacklist> blacklistEntities = BlacklistMapper.toEntities(blacklistDto).stream()
+                .peek(blacklist -> {
+                    String standardizedNumber = standardizePhoneNumber(blacklist.getPhoneNumber());
+                    blacklist.setPhoneNumber(standardizedNumber);
+                })
+                .collect(Collectors.toList());
+
         blacklistJpaRepository.saveAll(blacklistEntities);
 
         for (String phoneNumber : blacklistDto.getPhoneNumbers()) {
@@ -43,7 +48,12 @@ public class BlacklistServiceImpl implements BlacklistService {
             String standardizedNumber = standardizePhoneNumber(phoneNumber);
             jedis.srem(BLACKLIST_KEY, standardizedNumber);
         }
-        blacklistJpaRepository.removeBlacklistsByPhoneNumberIn(blacklistDto.getPhoneNumbers());
+
+        List<String> standardizedPhoneNumbers = blacklistDto.getPhoneNumbers().stream()
+                .map(this::standardizePhoneNumber)
+                .toList();
+
+        blacklistJpaRepository.removeBlacklistsByPhoneNumberIn(standardizedPhoneNumbers);
     }
 
     @Override
