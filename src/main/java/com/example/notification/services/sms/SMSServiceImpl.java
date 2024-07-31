@@ -1,5 +1,6 @@
 package com.example.notification.services.sms;
 
+import com.example.notification.constants.Message;
 import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.exceptions.ResourceNotFoundException;
@@ -44,7 +45,7 @@ public class SMSServiceImpl implements SMSService {
     @Override
     public SMSDto getSMSById(Long smsID){
         SMS sms = smsJpaRepository.findById(smsID).orElseThrow(
-                () -> new ResourceNotFoundException("SMS not found.")
+                () -> new ResourceNotFoundException(Message.ERROR_SMS_NOT_FOUND)
         );
 
         return SMSMapper.toDto(sms);
@@ -53,7 +54,7 @@ public class SMSServiceImpl implements SMSService {
     @Override
     public SMSDto updateSMS(Long smsId, SMSDto updatedSMSDto){
         SMS sms = smsJpaRepository.findById(smsId).orElseThrow(
-                () -> new ResourceNotFoundException("SMS not found.")
+                () -> new ResourceNotFoundException(Message.ERROR_SMS_NOT_FOUND)
         );
 
         sms.setStatus(updatedSMSDto.getStatus());
@@ -74,7 +75,7 @@ public class SMSServiceImpl implements SMSService {
             if (startDate.before(endDate) || startDate.equals(endDate)) {
                 smsDocuments = smsElasticRepository.findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable);
             } else {
-                throw new IllegalArgumentException("Start date must be before end date.");
+                throw new IllegalArgumentException(Message.ERROR_START_DATE_AFTER_END_DATE);
             }
         } else if (startDate == null && endDate != null) {
             smsDocuments = smsElasticRepository.findByPhoneNumberAndCreatedAtBefore(phoneNumber, endDate, pageable);
@@ -97,8 +98,6 @@ public class SMSServiceImpl implements SMSService {
         phoneNumberUtils.setPhoneNumber(phoneNumber);
 
         phoneNumber = phoneNumberUtils.getE164Format();
-
-        phoneNumberUtils.resetPhoneNumber();
 
         return phoneNumber;
     }

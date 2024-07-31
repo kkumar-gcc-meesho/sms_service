@@ -89,8 +89,6 @@ public class BlacklistServiceImpl implements BlacklistService {
 
         phoneNumber = phoneNumberUtils.getE164Format();
 
-        phoneNumberUtils.resetPhoneNumber();
-
         return phoneNumber;
     }
 }

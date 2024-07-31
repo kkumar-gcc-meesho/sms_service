@@ -1,6 +1,6 @@
 package com.example.notification.services;
 
-import com.example.notification.constants.NotificationConstants;
+import com.example.notification.constants.Kafka;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.services.kafka.SMSProducerServiceImpl;
 import com.example.notification.services.sms.SMSService;
@@ -40,6 +40,6 @@ public class SMSProducerServiceTest {
 
         smsProducerService.send(smsDto);
 
-        verify(kafkaTemplate, times(1)).send(NotificationConstants.KAFKA_TOPIC, String.valueOf(smsDto.getId()));
+        verify(kafkaTemplate, times(1)).send(Kafka.SMS_TOPIC, String.valueOf(smsDto.getId()));
     }
 }

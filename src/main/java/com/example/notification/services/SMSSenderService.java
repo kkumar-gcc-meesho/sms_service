@@ -1,6 +1,7 @@
 package com.example.notification.services;
 
 import com.example.notification.config.SMSConfig;
+import com.example.notification.constants.Key;
 import lombok.*;
 import org.json.JSONObject;
 import org.springframework.http.*;
@@ -40,7 +41,7 @@ public class SMSSenderService {
          JSONObject jsonObject= new JSONObject(String.format(reqBody, smsSenderPayload.getMessage(), smsSenderPayload.getPhoneNumber(), smsSenderPayload.getCorrelationId()));
          return restClient.post()
                 .uri(smsConfig.getMessagingApiUrl())
-                .header("key", smsConfig.getMessagingApiKey())
+                .header(Key.SMS_SENDER_AUTH_KEY, smsConfig.getMessagingApiKey())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(jsonObject).retrieve().toEntity(SMSSenderResponse.class);
 

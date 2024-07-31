@@ -2,6 +2,7 @@ package com.example.notification.dto;
 
 import com.example.notification.annotations.PhoneNumber;
 import com.example.notification.enums.SMSStatus;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -22,8 +23,8 @@ public class SMSDto {
     @NotNull
     private String message;
 
-    @Builder.Default
-    private String status = SMSStatus.PENDING.toString();
+    @Enumerated
+    private SMSStatus status;
     private Integer failureCode;
     private String failureComments;
 

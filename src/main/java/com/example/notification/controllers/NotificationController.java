@@ -1,6 +1,8 @@
 package com.example.notification.controllers;
 
 import com.example.notification.annotations.AuthorizationHeader;
+import com.example.notification.constants.Message;
+import com.example.notification.constants.Status;
 import com.example.notification.dto.BlacklistDto;
 import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
@@ -34,8 +36,8 @@ public class NotificationController {
         Long smsId = smsProducerService.send(smsDto);
 
         return ApiResponse.<SendSMSData>builder()
-                .status("success")
-                .data(new SendSMSData(smsId, "message sent successfully!"))
+                .status(Status.SUCCESS)
+                .data(new SendSMSData(smsId, Message.SUCCESS_SMS_SENT))
                 .build();
     }
 
@@ -45,8 +47,8 @@ public class NotificationController {
         blacklistService.addPhoneNumbersToBlacklist(blacklistDto);
 
         return ApiResponse.<String>builder()
-                .status("success")
-                .data("Successfully blacklisted")
+                .status(Status.SUCCESS)
+                .data(Message.SUCCESS_PHONE_NUMBER_BLACKLISTED)
                 .build();
     }
 
@@ -56,8 +58,8 @@ public class NotificationController {
         blacklistService.removePhoneNumbersFromBlacklist(blacklistDto);
 
         return ApiResponse.<String>builder()
-                .status("success")
-                .data("Successfully whitelisted")
+                .status(Status.SUCCESS)
+                .data(Message.SUCCESS_PHONE_NUMBER_WHITELISTED)
                 .build();
     }
 
@@ -65,7 +67,7 @@ public class NotificationController {
     @AuthorizationHeader
     public ApiResponse<Set<String>> getAllBlacklistedPhoneNumbers() {
         return ApiResponse.<Set<String>>builder()
-                .status("success")
+                .status(Status.SUCCESS)
                 .data(blacklistService.getAllBlacklistedPhoneNumbers())
                 .build();
     }
@@ -74,7 +76,7 @@ public class NotificationController {
     @AuthorizationHeader
     public ApiResponse<SMSDto> getSMSById(@PathVariable("requestId") long smsId) {
         return ApiResponse.<SMSDto>builder()
-                .status("success")
+                .status(Status.SUCCESS)
                 .data(smsService.getSMSById(smsId))
                 .build();
     }

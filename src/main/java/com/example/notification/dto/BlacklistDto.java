@@ -1,6 +1,7 @@
 package com.example.notification.dto;
 
 import com.example.notification.annotations.PhoneNumber;
+import com.example.notification.constants.Message;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -13,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class BlacklistDto {
 
-    @NotEmpty(message = "Phone numbers list cannot be empty")
-    @Size(min = 1, message = "At least one phone number is required")
+    @NotEmpty(message = Message.ERROR_PHONE_NUMBERS_LIST_EMPTY)
+    @Size(min = 1, message = Message.ERROR_PHONE_NUMBERS_LIST_MIN_SIZE)
     private List<@PhoneNumber String> phoneNumbers;
 
 }

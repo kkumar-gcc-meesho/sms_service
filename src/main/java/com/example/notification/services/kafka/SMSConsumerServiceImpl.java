@@ -1,6 +1,6 @@
 package com.example.notification.services.kafka;
 
-import com.example.notification.constants.NotificationConstants;
+import com.example.notification.constants.Kafka;
 import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.enums.SMSStatus;
@@ -28,7 +28,7 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
     private final SMSSenderService smsSenderService;
 
     @Override
-    @KafkaListener(topics = NotificationConstants.KAFKA_TOPIC)
+    @KafkaListener(topics = Kafka.SMS_TOPIC)
     public void listen(String smsId) throws BlacklistedPhoneNumberException {
         SMSDto smsDto = smsService.getSMSById(Long.valueOf(smsId));
 
@@ -46,9 +46,9 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
             ));
 
             if (response != null && response.getStatusCode().is2xxSuccessful()) {
-                smsDto.setStatus(SMSStatus.SENT.toString());
+                smsDto.setStatus(SMSStatus.SENT);
             } else {
-                smsDto.setStatus(SMSStatus.FAILED.toString());
+                smsDto.setStatus(SMSStatus.FAILED);
                 smsDto.setFailureCode(response != null ? response.getStatusCode().value() : 520);
                 smsDto.setFailureComments(response != null && response.getBody() != null ? response.getBody().toString() : "Unknown error");
 
@@ -57,7 +57,7 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
 
         } catch (Exception e) {
 
-            smsDto.setStatus(SMSStatus.FAILED.toString());
+            smsDto.setStatus(SMSStatus.FAILED);
             smsDto.setFailureCode(520);
             smsDto.setFailureComments(e.getMessage());
 

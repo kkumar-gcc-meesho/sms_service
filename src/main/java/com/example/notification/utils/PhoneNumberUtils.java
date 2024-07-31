@@ -24,7 +24,7 @@ public class PhoneNumberUtils {
 
     public String getE164Format() {
         if (phoneNumber == null) {
-            throw new InvalidPhoneNumberException("phoneNumber is null");
+            throw new InvalidPhoneNumberException();
         }
 
         return phoneNumberUtil.format(this.phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
@@ -32,7 +32,7 @@ public class PhoneNumberUtils {
 
     public boolean isValid() {
         if (phoneNumber == null) {
-            throw new InvalidPhoneNumberException("phoneNumber is null");
+            throw new InvalidPhoneNumberException();
         }
 
         return phoneNumberUtil.isValidNumber(this.phoneNumber);
@@ -46,10 +46,6 @@ public class PhoneNumberUtils {
 
             throw new InvalidPhoneNumberException();
         }
-    }
-
-    public void resetPhoneNumber() {
-        this.phoneNumber = null;
     }
 
 }

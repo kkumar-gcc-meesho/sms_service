@@ -1,6 +1,7 @@
 package com.example.notification.annotations;
 
 
+import com.example.notification.constants.Message;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,7 +15,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE_USE, ElementType.FIELD, ElementType.TYPE})
 public @interface PhoneNumber {
 
-    String message() default "invalid phoneNumber";
+    String message() default Message.ERROR_PHONE_NUMBER_INVALID;
 
     Class<?>[] groups() default {};
 

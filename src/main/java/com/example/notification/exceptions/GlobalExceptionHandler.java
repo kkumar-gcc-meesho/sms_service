@@ -2,6 +2,8 @@ package com.example.notification.exceptions;
 
 import java.util.Objects;
 
+import com.example.notification.constants.Code;
+import com.example.notification.constants.Status;
 import com.example.notification.responses.ApiResponse;
 import com.example.notification.responses.ErrorResponse;
 import lombok.NonNull;
@@ -22,7 +24,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, @NonNull HttpHeaders headers,
                                                                   HttpStatusCode status, @NonNull WebRequest request) {
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
+                .status(Status.ERROR)
                 .error(new ErrorResponse(status.toString(), Objects.requireNonNull(ex.getFieldError()).getDefaultMessage()))
                 .build();
 
@@ -32,8 +34,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BlacklistedPhoneNumberException.class)
     public ResponseEntity<ApiResponse<String>> handleBlacklistedPhoneNumberException(BlacklistedPhoneNumberException ex) {
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
-                .error(new ErrorResponse("BLACKLISTED_PHONE", ex.getMessage()))
+                .status(Status.ERROR)
+                .error(new ErrorResponse(Code.BLACKLISTED_PHONE, ex.getMessage()))
                 .build();
 
         return ResponseEntity.badRequest().body(apiResponse);
@@ -42,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(HeaderAuthorizationException.class)
     public ResponseEntity<ApiResponse<String>> handleHeaderAuthorizationException(HeaderAuthorizationException ex) {
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
+                .status(Status.ERROR)
                 .error(new ErrorResponse(HttpStatus.FORBIDDEN.toString(), ex.getMessage()))
                 .build();
 
@@ -52,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> handleSMSNotFoundException(ResourceNotFoundException ex) {
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
+                .status(Status.ERROR)
                 .error(new ErrorResponse(HttpStatus.NOT_FOUND.toString(), ex.getMessage()))
                 .build();
 
@@ -62,11 +64,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidPhoneNumberException.class)
     public ResponseEntity<ApiResponse<String>> handleInvalidPhoneNumberException(InvalidPhoneNumberException ex) {
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
+                .status(Status.ERROR)
                 .error(new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), ex.getMessage()))
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .status(Status.ERROR)
+                .error(new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), ex.getMessage()))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<String>> handleException(Exception ex) {
+        // TODO: need to investigate this
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
 }

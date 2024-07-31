@@ -1,5 +1,7 @@
 package com.example.notification.models;
 
+import com.example.notification.enums.SMSStatus;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,10 @@ public class SMSDocument {
     private Long id;
     private String phoneNumber;
     private String message;
-    private String status;
+
+    @Enumerated
+    private SMSStatus status;
+
     private Integer failureCode;
     private String failureComments;
     private Date createdAt;

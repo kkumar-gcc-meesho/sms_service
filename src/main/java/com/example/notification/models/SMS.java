@@ -26,8 +26,8 @@ public class SMS {
     private String phoneNumber;
     private String message;
 
-    @Builder.Default
-    private String status = SMSStatus.PENDING.toString();
+    @Enumerated
+    private SMSStatus status;
     private Integer failureCode;
     private String failureComments;
 

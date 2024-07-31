@@ -1,6 +1,6 @@
 package com.example.notification.services.kafka;
 
-import com.example.notification.constants.NotificationConstants;
+import com.example.notification.constants.Kafka;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.services.sms.SMSService;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ public class SMSProducerServiceImpl implements SMSProducerService {
     @Override
     public Long send(SMSDto smsDto) {
         SMSDto sms = smsService.createSMS(smsDto);
-        kafkaTemplate.send(NotificationConstants.KAFKA_TOPIC, String.valueOf(sms.getId()));
+        kafkaTemplate.send(Kafka.SMS_TOPIC, String.valueOf(sms.getId()));
 
         return sms.getId();
     }
