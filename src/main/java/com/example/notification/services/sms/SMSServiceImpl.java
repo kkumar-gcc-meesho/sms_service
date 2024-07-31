@@ -36,10 +36,9 @@ public class SMSServiceImpl implements SMSService {
     }
 
     @Override
-    public SMSDocumentDto createSMSDocument(SMSDocumentDto smsDocumentDto) {
+    public void createSMSDocument(SMSDocumentDto smsDocumentDto) {
         SMSDocument smsDocument = SMSDocumentMapper.toEntity(smsDocumentDto);
-        SMSDocument savedSMSDocument = smsElasticRepository.save(smsDocument);
-        return SMSDocumentMapper.toDto(savedSMSDocument);
+        smsElasticRepository.save(smsDocument);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class SMSServiceImpl implements SMSService {
     }
 
     @Override
-    public SMSDto updateSMS(Long smsId, SMSDto updatedSMSDto){
+    public void updateSMS(Long smsId, SMSDto updatedSMSDto){
         SMS sms = smsJpaRepository.findById(smsId).orElseThrow(
                 () -> new ResourceNotFoundException(Message.ERROR_SMS_NOT_FOUND)
         );
@@ -60,9 +59,6 @@ public class SMSServiceImpl implements SMSService {
         sms.setStatus(updatedSMSDto.getStatus());
         sms.setFailureCode(updatedSMSDto.getFailureCode());
         sms.setFailureComments(updatedSMSDto.getFailureComments());
-        SMS savedSMS = smsJpaRepository.save(sms);
-
-        return SMSMapper.toDto(savedSMS);
     }
 
     @Override

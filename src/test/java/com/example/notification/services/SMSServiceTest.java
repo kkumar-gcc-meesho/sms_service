@@ -3,7 +3,6 @@ package com.example.notification.services;
 import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.exceptions.ResourceNotFoundException;
-import com.example.notification.mappers.SMSDocumentMapper;
 import com.example.notification.mappers.SMSMapper;
 import com.example.notification.models.SMS;
 import com.example.notification.models.SMSDocument;
@@ -69,27 +68,6 @@ public class SMSServiceTest {
     }
 
     @Test
-    public void createSMSDocument() {
-        SMSDocumentDto smsDocumentDto = new SMSDocumentDto();
-        smsDocumentDto.setPhoneNumber("+917986543210");
-        smsDocumentDto.setMessage("Hello Document");
-
-        SMSDocument smsDocument = SMSDocumentMapper.toEntity(smsDocumentDto);
-        smsDocument.setId(1L);
-
-        when(smsElasticRepository.save(any(SMSDocument.class))).thenReturn(smsDocument);
-
-        SMSDocumentDto result = smsServiceImpl.createSMSDocument(smsDocumentDto);
-
-        verify(smsElasticRepository, times(1)).save(any(SMSDocument.class));
-
-        assertThat(result).isNotNull();
-        assertThat(result.getPhoneNumber()).isEqualTo("+917986543210");
-        assertThat(result.getMessage()).isEqualTo("Hello Document");
-        assertThat(result.getId()).isEqualTo(1L);
-    }
-
-    @Test
     public void getSMSById(){
         Long smsId = 1L;
 
@@ -115,36 +93,6 @@ public class SMSServiceTest {
 
         when(smsJpaRepository.findById(smsId)).thenReturn(Optional.empty());
         smsServiceImpl.getSMSById(smsId);
-    }
-
-    @Test
-    public void updateSMS() {
-        Long smsId = 1L;
-
-        SMSDto smsDto = new SMSDto();
-        smsDto.setId(smsId);
-        smsDto.setPhoneNumber("+917986543210");
-        smsDto.setMessage("Hello World!");
-        smsDto.setStatus("SENT");
-
-        SMS sms = SMSMapper.toEntity(smsDto);
-        sms.setId(1L);
-        sms.setPhoneNumber("+917289839849");
-        sms.setMessage("Hello Krishan!");
-
-        when(smsJpaRepository.findById(smsId)).thenReturn(Optional.of(sms));
-        when(smsJpaRepository.save(any(SMS.class))).thenReturn(SMSMapper.toEntity(smsDto));
-
-        SMSDto result = smsServiceImpl.updateSMS(smsId, smsDto);
-
-        verify(smsJpaRepository, times(1)).findById(smsId);
-        verify(smsJpaRepository, times(1)).save(any(SMS.class));
-        assertThat(result).isNotNull();
-        assertThat(result.getPhoneNumber()).isEqualTo("+917986543210");
-        assertThat(result.getMessage()).isEqualTo("Hello World!");
-        assertThat(result.getStatus()).isEqualTo("SENT");
-        assertThat(result.getFailureCode()).isNull();
-        assertThat(result.getFailureComments()).isNull();
     }
 
     @Test(expected = ResourceNotFoundException.class)

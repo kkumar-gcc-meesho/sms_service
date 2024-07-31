@@ -54,7 +54,7 @@ public class SMSConsumerServiceTest {
         verify(smsService, times(1)).updateSMS(eq(smsDto.getId()), smsDtoCaptor.capture());
         SMSDto updatedSMSDto = smsDtoCaptor.getValue();
 
-        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED.toString());
+        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED);
 
         verify(smsService, times(1)).createSMSDocument(any(SMSDocumentDto.class));
     }
@@ -93,7 +93,7 @@ public class SMSConsumerServiceTest {
         verify(smsService, times(1)).updateSMS(eq(smsDto.getId()), smsDtoCaptor.capture());
         SMSDto updatedSMSDto = smsDtoCaptor.getValue();
 
-        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED.toString());
+        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED);
         assertThat(updatedSMSDto.getFailureCode()).isEqualTo(520);
         assertThat(updatedSMSDto.getFailureComments()).isEqualTo("Sending Failed");
 
