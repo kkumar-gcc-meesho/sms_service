@@ -1,4 +1,4 @@
-package com.example.notification.services;
+package com.example.notification.services.imiconnect;
 
 import lombok.Data;
 import org.json.JSONArray;

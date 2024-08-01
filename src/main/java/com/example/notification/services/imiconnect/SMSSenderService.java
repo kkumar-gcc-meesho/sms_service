@@ -1,4 +1,4 @@
-package com.example.notification.services;
+package com.example.notification.services.imiconnect;
 
 import com.example.notification.config.SMSConfig;
 import com.example.notification.constants.Key;

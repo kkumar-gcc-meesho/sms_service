@@ -5,9 +5,9 @@ import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.enums.SMSStatus;
 import com.example.notification.exceptions.BlacklistedPhoneNumberException;
-import com.example.notification.services.SMSSenderPayload;
-import com.example.notification.services.SMSSenderResponse;
-import com.example.notification.services.SMSSenderService;
+import com.example.notification.services.imiconnect.SMSSenderPayload;
+import com.example.notification.services.imiconnect.SMSSenderResponse;
+import com.example.notification.services.imiconnect.SMSSenderService;
 import com.example.notification.services.sms.SMSService;
 import com.example.notification.services.blacklist.BlacklistService;
 import lombok.AllArgsConstructor;
@@ -46,7 +46,18 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
             ));
 
             if (response != null && response.getStatusCode().is2xxSuccessful()) {
-                smsDto.setStatus(SMSStatus.SENT);
+
+                SMSSenderResponse body = response.getBody();
+                if (body != null && body.getResponse().is7xxxError()){
+
+                    smsDto.setStatus(SMSStatus.FAILED);
+                    smsDto.setFailureCode(body.getResponse().getCode());
+                    smsDto.setFailureComments(body.getResponse().getDescription());
+
+                } else{
+                    smsDto.setStatus(SMSStatus.SENT);
+                }
+
             } else {
                 smsDto.setStatus(SMSStatus.FAILED);
                 smsDto.setFailureCode(response != null ? response.getStatusCode().value() : 520);
