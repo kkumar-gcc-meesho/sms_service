@@ -17,6 +17,7 @@ import redis.clients.jedis.JedisPooled;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -117,7 +118,7 @@ public class BlacklistServiceTest {
     @Test
     public void getAllBlacklistedPhoneNumbersFromDbAndCacheInRedis(){
         List<Blacklist> blacklists = new ArrayList<>();
-        blacklists.add(new Blacklist(1L, "+917986543210"));
+        blacklists.add(new Blacklist(UUID.randomUUID(), "+917986543210"));
 
         when(jedis.smembers(BLACKLIST_KEY)).thenReturn(Set.of());
         when(smsConfig.getRedisBlacklistKey()).thenReturn(BLACKLIST_KEY);

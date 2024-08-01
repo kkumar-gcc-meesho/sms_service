@@ -21,10 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.verify;
@@ -48,12 +45,14 @@ public class SMSServiceTest {
 
     @Test
     public void createSMS() {
+        UUID smsId = UUID.randomUUID();
+
         SMSDto smsDto = new SMSDto();
         smsDto.setPhoneNumber("+917986543210");
         smsDto.setMessage("Hello World");
 
         SMS sms = SMSMapper.toEntity(smsDto);
-        sms.setId(1L);
+        sms.setId(smsId);
 
         when(smsJpaRepository.save(any(SMS.class))).thenReturn(sms);
 
@@ -64,12 +63,12 @@ public class SMSServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getPhoneNumber()).isEqualTo("+917986543210");
         assertThat(result.getMessage()).isEqualTo("Hello World");
-        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getId()).isEqualTo(smsId);
     }
 
     @Test
     public void getSMSById(){
-        Long smsId = 1L;
+        UUID smsId = UUID.randomUUID();
 
         SMS sms = new SMS();
         sms.setId(smsId);
@@ -89,7 +88,7 @@ public class SMSServiceTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void getSMSByIdShouldThrowResourceNotFoundException(){
-        Long smsId = 1L;
+        UUID smsId = UUID.randomUUID();
 
         when(smsJpaRepository.findById(smsId)).thenReturn(Optional.empty());
         smsServiceImpl.getSMSById(smsId);
@@ -97,7 +96,7 @@ public class SMSServiceTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void updateSMSShouldThrowResourceNotFoundException(){
-        Long smsId = 1L;
+        UUID smsId = UUID.randomUUID();
         SMSDto smsDto = new SMSDto();
         smsDto.setId(smsId);
         smsDto.setPhoneNumber("+917986543210");
@@ -153,12 +152,12 @@ public class SMSServiceTest {
 
     private static Page<SMSDocument> getSmsDocuments(String phoneNumber) {
         SMSDocument smsDocument1 = new SMSDocument();
-        smsDocument1.setId(1L);
+        smsDocument1.setId(UUID.randomUUID());
         smsDocument1.setPhoneNumber(phoneNumber);
         smsDocument1.setMessage("Message 1");
 
         SMSDocument smsDocument2 = new SMSDocument();
-        smsDocument2.setId(2L);
+        smsDocument2.setId(UUID.randomUUID());
         smsDocument2.setPhoneNumber(phoneNumber);
         smsDocument2.setMessage("Message 2");
 

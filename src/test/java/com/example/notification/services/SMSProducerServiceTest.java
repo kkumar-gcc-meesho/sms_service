@@ -13,6 +13,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +36,7 @@ public class SMSProducerServiceTest {
         smsDto.setPhoneNumber("+917986543210");
         smsDto.setMessage("Hello World");
 
-        smsDto.setId(1L);
+        smsDto.setId(UUID.randomUUID());
 
         when(smsService.createSMS(any(SMSDto.class))).thenReturn(smsDto);
 
