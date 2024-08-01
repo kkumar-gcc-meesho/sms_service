@@ -5,5 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.notification.models.SMS;
 
+import java.util.UUID;
+
 @Repository
-public interface SMSJpaRepository extends JpaRepository<SMS, Long> {}
+public interface SMSJpaRepository extends JpaRepository<SMS, UUID> {}

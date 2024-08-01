@@ -1,6 +1,5 @@
 package com.example.notification.utils;
 
-
 import com.example.notification.exceptions.InvalidPhoneNumberException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;

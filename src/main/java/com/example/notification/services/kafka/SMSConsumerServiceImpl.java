@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class SMSConsumerServiceImpl implements SMSConsumerService {
@@ -30,7 +32,7 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
     @Override
     @KafkaListener(topics = Kafka.SMS_TOPIC)
     public void listen(String smsId) throws BlacklistedPhoneNumberException {
-        SMSDto smsDto = smsService.getSMSById(Long.valueOf(smsId));
+        SMSDto smsDto = smsService.getSMSById(UUID.fromString(smsId));
 
         boolean isBlacklisted = blacklistService.isPhoneNumberBlacklisted(smsDto.getPhoneNumber());
         if (isBlacklisted) {
@@ -87,7 +89,7 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
             );
 
             smsService.createSMSDocument(smsDoc);
-            smsService.updateSMS(Long.valueOf(smsId), smsDto);
+            smsService.updateSMS(UUID.fromString(smsId), smsDto);
 
         }
     }

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class SMSProducerServiceImpl implements SMSProducerService {
@@ -15,7 +17,7 @@ public class SMSProducerServiceImpl implements SMSProducerService {
     private final SMSService smsService;
 
     @Override
-    public Long send(SMSDto smsDto) {
+    public UUID send(SMSDto smsDto) {
         SMSDto sms = smsService.createSMS(smsDto);
         kafkaTemplate.send(Kafka.SMS_TOPIC, String.valueOf(sms.getId()));
 

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 
 @RestController
@@ -33,7 +34,7 @@ public class NotificationController {
     @PostMapping("/sms/send")
     @AuthorizationHeader
     public ApiResponse<SendSMSData> sendSMS(@Valid @RequestBody SMSDto smsDto) {
-        Long smsId = smsProducerService.send(smsDto);
+        UUID smsId = smsProducerService.send(smsDto);
 
         return ApiResponse.<SendSMSData>builder()
                 .status(Status.SUCCESS)
@@ -74,7 +75,7 @@ public class NotificationController {
 
     @GetMapping("/sms/{requestId}")
     @AuthorizationHeader
-    public ApiResponse<SMSDto> getSMSById(@PathVariable("requestId") long smsId) {
+    public ApiResponse<SMSDto> getSMSById(@PathVariable("requestId") UUID smsId) {
         return ApiResponse.<SMSDto>builder()
                 .status(Status.SUCCESS)
                 .data(smsService.getSMSById(smsId))

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
+import java.util.UUID;
 
 
 @Entity
@@ -20,8 +21,8 @@ import java.util.Date;
 public class SMS {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy= GenerationType.UUID)
+    private UUID id;
 
     private String phoneNumber;
     private String message;

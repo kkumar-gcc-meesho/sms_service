@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Builder
 @Getter
@@ -15,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class SMSDto {
 
-    private Long id;
+    private UUID id;
 
     @PhoneNumber
     private String phoneNumber;

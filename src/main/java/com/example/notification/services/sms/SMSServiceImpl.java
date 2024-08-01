@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -42,7 +43,7 @@ public class SMSServiceImpl implements SMSService {
     }
 
     @Override
-    public SMSDto getSMSById(Long smsID){
+    public SMSDto getSMSById(UUID smsID){
         SMS sms = smsJpaRepository.findById(smsID).orElseThrow(
                 () -> new ResourceNotFoundException(Message.ERROR_SMS_NOT_FOUND)
         );
@@ -51,7 +52,7 @@ public class SMSServiceImpl implements SMSService {
     }
 
     @Override
-    public void updateSMS(Long smsId, SMSDto updatedSMSDto){
+    public void updateSMS(UUID smsId, SMSDto updatedSMSDto){
         SMS sms = smsJpaRepository.findById(smsId).orElseThrow(
                 () -> new ResourceNotFoundException(Message.ERROR_SMS_NOT_FOUND)
         );

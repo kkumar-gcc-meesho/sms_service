@@ -7,9 +7,10 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Repository
-public interface SMSElasticRepository extends ElasticsearchRepository<SMSDocument, Long> {
+public interface SMSElasticRepository extends ElasticsearchRepository<SMSDocument, UUID> {
     Page<SMSDocument> findByPhoneNumber(String phoneNumber, Pageable pageable);
 
     Page<SMSDocument> findByPhoneNumberAndCreatedAtAfter(String phoneNumber, Date startDate, Pageable pageable);

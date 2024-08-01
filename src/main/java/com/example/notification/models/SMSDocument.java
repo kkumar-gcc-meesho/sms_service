@@ -1,5 +1,6 @@
 package com.example.notification.models;
 
+import com.example.notification.constants.Elasticsearch;
 import com.example.notification.enums.SMSStatus;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -9,15 +10,16 @@ import lombok.Setter;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.util.Date;
+import java.util.UUID;
 
-@Document(indexName = "sms")
+@Document(indexName = Elasticsearch.INDEX)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class SMSDocument {
 
-    private Long id;
+    private UUID id;
     private String phoneNumber;
     private String message;
 

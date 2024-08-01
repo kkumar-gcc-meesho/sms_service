@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,7 +74,7 @@ public class SMSConsumerServiceTest {
         verify(smsService, times(1)).getSMSById(smsDto.getId());
         verify(blacklistService, times(1)).isPhoneNumberBlacklisted(smsDto.getPhoneNumber());
         verify(smsSenderService, never()).send(any(SMSSenderPayload.class));
-        verify(smsService, never()).updateSMS(anyLong(), any(SMSDto.class));
+        verify(smsService, never()).updateSMS(any(), any(SMSDto.class));
         verify(smsService, never()).createSMSDocument(any(SMSDocumentDto.class));
     }
 
@@ -104,7 +105,7 @@ public class SMSConsumerServiceTest {
 
     private SMSDto getTestSMSDto(){
         SMSDto smsDto = new SMSDto();
-        smsDto.setId(1L);
+        smsDto.setId(UUID.randomUUID());
         smsDto.setPhoneNumber("+917986543210");
         smsDto.setMessage("Test Message");
         smsDto.setCreatedAt(new Date());

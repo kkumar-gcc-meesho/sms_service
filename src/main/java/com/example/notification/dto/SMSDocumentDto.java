@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class SMSDocumentDto {
 
-    private Long id;
+    private UUID id;
     private String phoneNumber;
     private String message;
     private SMSStatus status;
