@@ -59,6 +59,8 @@ public class SMSServiceImpl implements SMSService {
         sms.setStatus(updatedSMSDto.getStatus());
         sms.setFailureCode(updatedSMSDto.getFailureCode());
         sms.setFailureComments(updatedSMSDto.getFailureComments());
+
+        smsJpaRepository.save(sms);
     }
 
     @Override
