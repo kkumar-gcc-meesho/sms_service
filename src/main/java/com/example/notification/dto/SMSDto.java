@@ -1,8 +1,10 @@
 package com.example.notification.dto;
 
 import com.example.notification.annotations.PhoneNumber;
+import com.example.notification.constants.Message;
 import com.example.notification.enums.SMSStatus;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -22,6 +24,7 @@ public class SMSDto {
     private String phoneNumber;
 
     @NotNull
+    @NotBlank(message = Message.ERROR_MESSAGE_MUST_NOT_BE_BLANK)
     private String message;
 
     @Enumerated

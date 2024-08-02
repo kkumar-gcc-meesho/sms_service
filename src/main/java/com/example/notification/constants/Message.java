@@ -5,9 +5,13 @@ public class Message {
 
     public static final String ERROR_START_DATE_AFTER_END_DATE = "Start date must be before end date";
 
+    public static final String ERROR_MESSAGE_MUST_NOT_BE_BLANK = "Message must not be blank";
+
     public static final String ERROR_PHONE_NUMBER_BLACKLISTED = "Phone number is blacklisted";
 
     public static final String ERROR_PHONE_NUMBER_INVALID = "Phone number is invalid";
+
+    public static final String ERROR_INTERNAL_SERVER = "Internal server error";
 
     public static final String ERROR_PHONE_NUMBERS_LIST_EMPTY = "Phone numbers list cannot be empty";
 

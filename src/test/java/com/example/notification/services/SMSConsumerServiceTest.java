@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Date;
 import java.util.UUID;
@@ -97,7 +98,7 @@ public class SMSConsumerServiceTest {
         SMSDto updatedSMSDto = smsDtoCaptor.getValue();
 
         assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED);
-        assertThat(updatedSMSDto.getFailureCode()).isEqualTo(520);
+        assertThat(updatedSMSDto.getFailureCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
         assertThat(updatedSMSDto.getFailureComments()).isEqualTo("Sending Failed");
 
         verify(smsService, times(1)).createSMSDocument(any(SMSDocumentDto.class));

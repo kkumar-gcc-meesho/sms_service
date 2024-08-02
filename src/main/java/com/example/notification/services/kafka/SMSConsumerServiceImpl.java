@@ -1,6 +1,7 @@
 package com.example.notification.services.kafka;
 
 import com.example.notification.constants.Kafka;
+import com.example.notification.constants.Message;
 import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.enums.SMSStatus;
@@ -13,6 +14,7 @@ import com.example.notification.services.blacklist.BlacklistService;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -62,8 +64,8 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
 
             } else {
                 smsDto.setStatus(SMSStatus.FAILED);
-                smsDto.setFailureCode(response != null ? response.getStatusCode().value() : 520);
-                smsDto.setFailureComments(response != null && response.getBody() != null ? response.getBody().toString() : "Unknown error");
+                smsDto.setFailureCode(response != null ? response.getStatusCode().value() : HttpStatus.INTERNAL_SERVER_ERROR.value());
+                smsDto.setFailureComments(response != null && response.getBody() != null ? response.getBody().toString() : Message.ERROR_INTERNAL_SERVER);
 
                 logger.error(response != null ? response.getBody() : "Response is null");
             }
@@ -71,7 +73,7 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
         } catch (Exception e) {
 
             smsDto.setStatus(SMSStatus.FAILED);
-            smsDto.setFailureCode(520);
+            smsDto.setFailureCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             smsDto.setFailureComments(e.getMessage());
 
             logger.error("Exception occurred while sending SMS", e);
