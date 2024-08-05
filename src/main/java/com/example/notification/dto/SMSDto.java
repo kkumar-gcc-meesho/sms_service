@@ -23,7 +23,7 @@ public class SMSDto {
     @PhoneNumber
     private String phoneNumber;
 
-    @NotNull
+    @NotNull(message = Message.ERROR_MESSAGE_MUST_NOT_BE_NULL)
     @NotBlank(message = Message.ERROR_MESSAGE_MUST_NOT_BE_BLANK)
     private String message;
 

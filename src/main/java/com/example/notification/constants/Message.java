@@ -7,6 +7,8 @@ public class Message {
 
     public static final String ERROR_MESSAGE_MUST_NOT_BE_BLANK = "Message must not be blank";
 
+    public static final String ERROR_MESSAGE_MUST_NOT_BE_NULL = "Message must not be null";
+
     public static final String ERROR_PHONE_NUMBER_BLACKLISTED = "Phone number is blacklisted";
 
     public static final String ERROR_PHONE_NUMBER_INVALID = "Phone number is invalid";
