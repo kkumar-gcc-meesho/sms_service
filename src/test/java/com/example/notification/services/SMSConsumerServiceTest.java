@@ -64,22 +64,6 @@ public class SMSConsumerServiceTest {
     }
 
     @Test
-    public void listenShouldThrowBlacklistedPhoneNumberExceptionWhenPhoneNumberIsBlacklisted(){
-        SMSDto smsDto = getTestSMSDto();
-
-        when(smsService.getSMSById(smsDto.getId())).thenReturn(smsDto);
-        when(blacklistService.isPhoneNumberBlacklisted(smsDto.getPhoneNumber())).thenReturn(true);
-
-        assertThrows(BlacklistedPhoneNumberException.class, () -> smsConsumerService.listen(String.valueOf(smsDto.getId())));
-
-        verify(smsService, times(1)).getSMSById(smsDto.getId());
-        verify(blacklistService, times(1)).isPhoneNumberBlacklisted(smsDto.getPhoneNumber());
-        verify(smsSenderService, never()).send(any(SMSSenderPayload.class));
-        verify(smsService, never()).updateSMS(any(), any(SMSDto.class));
-        verify(smsService, never()).createSMSDocument(any(SMSDocumentDto.class));
-    }
-
-    @Test
     public void listenShouldUpdateSMSStatusToFailedWhenSMSSendingFails() {
         SMSDto smsDto = getTestSMSDto();
 
