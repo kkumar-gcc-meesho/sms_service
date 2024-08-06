@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<scope>test-runtime</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
