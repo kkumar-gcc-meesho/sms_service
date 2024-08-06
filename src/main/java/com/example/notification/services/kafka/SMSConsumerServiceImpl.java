@@ -36,12 +36,12 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
     public void listen(String smsId) throws BlacklistedPhoneNumberException {
         SMSDto smsDto = smsService.getSMSById(UUID.fromString(smsId));
 
-        boolean isBlacklisted = blacklistService.isPhoneNumberBlacklisted(smsDto.getPhoneNumber());
-        if (isBlacklisted) {
-            throw new BlacklistedPhoneNumberException();
-        }
-
         try {
+
+            boolean isBlacklisted = blacklistService.isPhoneNumberBlacklisted(smsDto.getPhoneNumber());
+            if (isBlacklisted) {
+                throw new BlacklistedPhoneNumberException();
+            }
 
            ResponseEntity<SMSSenderResponse> response = smsSenderService.send(new SMSSenderPayload(
                     smsDto.getPhoneNumber(),
