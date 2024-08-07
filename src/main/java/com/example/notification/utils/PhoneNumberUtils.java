@@ -34,7 +34,9 @@ public class PhoneNumberUtils {
             throw new InvalidPhoneNumberException();
         }
 
-        return phoneNumberUtil.isValidNumber(this.phoneNumber);
+        // SMSs can be sent to MOBILE or FIXED_LINE_OR_MOBILE numbers. So considering only these number as valid.
+        PhoneNumberUtil.PhoneNumberType numberType = phoneNumberUtil.getNumberType(this.phoneNumber);
+        return numberType == PhoneNumberUtil.PhoneNumberType.MOBILE || numberType == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE;
     }
 
     public void setPhoneNumber(String phoneNumber) {
