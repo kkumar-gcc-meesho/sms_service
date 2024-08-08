@@ -1,31 +1,35 @@
 package com.example.notification.dto;
 
+import com.example.notification.annotations.PhoneNumber;
+import com.example.notification.constants.Message;
 import com.example.notification.enums.SMSStatus;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SMSDto {
+public class SMSDto implements Serializable {
 
-    private Long id;
+    private UUID id;
 
-    @NotBlank(message = "The phone number is required.")
-    @Pattern(regexp = "^(\\+91)?[6-9]\\d{9}$", message = "The phone number is not valid.")
+    @PhoneNumber
     private String phoneNumber;
 
-    @NotNull
+    @NotNull(message = Message.ERROR_MESSAGE_MUST_NOT_BE_NULL)
+    @NotBlank(message = Message.ERROR_MESSAGE_MUST_NOT_BE_BLANK)
     private String message;
 
-    @Builder.Default
-    private String status = SMSStatus.PENDING.toString();
+    @Enumerated
+    private SMSStatus status;
     private Integer failureCode;
     private String failureComments;
 

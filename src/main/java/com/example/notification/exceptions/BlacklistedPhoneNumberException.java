@@ -1,11 +1,11 @@
 package com.example.notification.exceptions;
 
+import com.example.notification.constants.Message;
+
 public class BlacklistedPhoneNumberException extends RuntimeException {
 
-    private static final String DEFAULT_MESSAGE = "The phone number is blacklisted.";
-
     public BlacklistedPhoneNumberException() {
-        super(DEFAULT_MESSAGE);
+        super(Message.ERROR_PHONE_NUMBER_BLACKLISTED);
     }
 
 }

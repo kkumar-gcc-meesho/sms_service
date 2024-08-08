@@ -6,12 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
+import java.util.UUID;
 
 public interface SMSService {
     SMSDto createSMS(SMSDto smsDto);
-    SMSDocumentDto createSMSDocument(SMSDocumentDto smsDocumentDto);
-    SMSDto getSMSById(Long smsId);
-    SMSDto updateSMS(Long smsId, SMSDto updatedSMSDto);
+    void createSMSDocument(SMSDocumentDto smsDocumentDto);
+    SMSDto getSMSById(UUID smsId);
+    void updateSMS(UUID smsId, SMSDto updatedSMSDto);
     Page<SMSDocumentDto> getSMSDocumentsByPhoneNumberAndDateRange(String phoneNumber, Date startDate, Date endDate, Pageable pageable);
     Page<SMSDocumentDto> getSMSDocumentsByMessageContaining(String text, Pageable pageable);
 }

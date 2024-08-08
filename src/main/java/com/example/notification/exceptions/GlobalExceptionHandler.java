@@ -1,12 +1,11 @@
 package com.example.notification.exceptions;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
+import com.example.notification.constants.Code;
+import com.example.notification.constants.Status;
 import com.example.notification.responses.ApiResponse;
 import com.example.notification.responses.ErrorResponse;
-import com.example.notification.utils.ErrorResponseUtil;
 import lombok.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,23 +23,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, @NonNull HttpHeaders headers,
                                                                   HttpStatusCode status, @NonNull WebRequest request) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult()
-//                .getFieldErrors()
-//                .forEach(error -> {
-//                    errors.put(error.getField(), error.getDefaultMessage());
-//                });
-
-//        body.put("error", errors);
-
-//        Map<String, Object> body = new HashMap<>();
-//        body.put("error", ErrorResponseUtil.add(status.toString(), Objects.requireNonNull(ex.getFieldError()).getDefaultMessage()));
-//
-//        return new ResponseEntity<>(body, HttpStatusCode.valueOf(400));
-
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
-                .error(new ErrorResponse(status.toString(), Objects.requireNonNull(ex.getFieldError()).getDefaultMessage(), "Validation failed"))
+                .status(Status.ERROR)
+                .error(new ErrorResponse(status.toString(), Objects.requireNonNull(ex.getFieldError()).getDefaultMessage()))
                 .build();
 
         return ResponseEntity.badRequest().body(apiResponse);
@@ -49,8 +34,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BlacklistedPhoneNumberException.class)
     public ResponseEntity<ApiResponse<String>> handleBlacklistedPhoneNumberException(BlacklistedPhoneNumberException ex) {
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
-                .error(new ErrorResponse("BLACKLISTED_PHONE", ex.getMessage(), "Phone number is blacklisted"))
+                .status(Status.ERROR)
+                .error(new ErrorResponse(Code.BLACKLISTED_PHONE, ex.getMessage()))
                 .build();
 
         return ResponseEntity.badRequest().body(apiResponse);
@@ -59,19 +44,41 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(HeaderAuthorizationException.class)
     public ResponseEntity<ApiResponse<String>> handleHeaderAuthorizationException(HeaderAuthorizationException ex) {
         ApiResponse<String> apiResponse = ApiResponse.<String>builder()
-                .status("error")
-                .error(new ErrorResponse(HttpStatus.FORBIDDEN.toString(), ex.getMessage(), "Forbidden"))
+                .status(Status.ERROR)
+                .error(new ErrorResponse(HttpStatus.FORBIDDEN.toString(), ex.getMessage()))
                 .build();
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponse);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleSMSNotFoundException(ResourceNotFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("error", ErrorResponseUtil.add(String.valueOf(HttpStatus.NOT_FOUND), ex.getMessage()));
+    public ResponseEntity<ApiResponse<String>> handleSMSNotFoundException(ResourceNotFoundException ex) {
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .status(Status.ERROR)
+                .error(new ErrorResponse(HttpStatus.NOT_FOUND.toString(), ex.getMessage()))
+                .build();
 
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+    }
+
+    @ExceptionHandler(InvalidPhoneNumberException.class)
+    public ResponseEntity<ApiResponse<String>> handleInvalidPhoneNumberException(InvalidPhoneNumberException ex) {
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .status(Status.ERROR)
+                .error(new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), ex.getMessage()))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ApiResponse<String> apiResponse = ApiResponse.<String>builder()
+                .status(Status.ERROR)
+                .error(new ErrorResponse(HttpStatus.BAD_REQUEST.toString(), ex.getMessage()))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
     }
 
 }

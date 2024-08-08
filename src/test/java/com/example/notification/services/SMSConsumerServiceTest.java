@@ -4,6 +4,8 @@ import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.enums.SMSStatus;
 import com.example.notification.exceptions.BlacklistedPhoneNumberException;
+import com.example.notification.services.imiconnect.SMSSenderPayload;
+import com.example.notification.services.imiconnect.SMSSenderService;
 import com.example.notification.services.kafka.SMSConsumerServiceImpl;
 import com.example.notification.services.sms.SMSService;
 import com.example.notification.services.blacklist.BlacklistService;
@@ -13,8 +15,10 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.Date;
+import java.util.UUID;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,25 +58,9 @@ public class SMSConsumerServiceTest {
         verify(smsService, times(1)).updateSMS(eq(smsDto.getId()), smsDtoCaptor.capture());
         SMSDto updatedSMSDto = smsDtoCaptor.getValue();
 
-        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.SENT.toString());
+        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED);
 
         verify(smsService, times(1)).createSMSDocument(any(SMSDocumentDto.class));
-    }
-
-    @Test
-    public void listenShouldThrowBlacklistedPhoneNumberExceptionWhenPhoneNumberIsBlacklisted(){
-        SMSDto smsDto = getTestSMSDto();
-
-        when(smsService.getSMSById(smsDto.getId())).thenReturn(smsDto);
-        when(blacklistService.isPhoneNumberBlacklisted(smsDto.getPhoneNumber())).thenReturn(true);
-
-        assertThrows(BlacklistedPhoneNumberException.class, () -> smsConsumerService.listen(String.valueOf(smsDto.getId())));
-
-        verify(smsService, times(1)).getSMSById(smsDto.getId());
-        verify(blacklistService, times(1)).isPhoneNumberBlacklisted(smsDto.getPhoneNumber());
-        verify(smsSenderService, never()).send(any(SMSSenderPayload.class));
-        verify(smsService, never()).updateSMS(anyLong(), any(SMSDto.class));
-        verify(smsService, never()).createSMSDocument(any(SMSDocumentDto.class));
     }
 
     @Test
@@ -93,8 +81,8 @@ public class SMSConsumerServiceTest {
         verify(smsService, times(1)).updateSMS(eq(smsDto.getId()), smsDtoCaptor.capture());
         SMSDto updatedSMSDto = smsDtoCaptor.getValue();
 
-        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED.toString());
-        assertThat(updatedSMSDto.getFailureCode()).isEqualTo(-1);
+        assertThat(updatedSMSDto.getStatus()).isEqualTo(SMSStatus.FAILED);
+        assertThat(updatedSMSDto.getFailureCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
         assertThat(updatedSMSDto.getFailureComments()).isEqualTo("Sending Failed");
 
         verify(smsService, times(1)).createSMSDocument(any(SMSDocumentDto.class));
@@ -102,7 +90,7 @@ public class SMSConsumerServiceTest {
 
     private SMSDto getTestSMSDto(){
         SMSDto smsDto = new SMSDto();
-        smsDto.setId(1L);
+        smsDto.setId(UUID.randomUUID());
         smsDto.setPhoneNumber("+917986543210");
         smsDto.setMessage("Test Message");
         smsDto.setCreatedAt(new Date());

@@ -3,6 +3,8 @@ package com.example.notification.services.kafka;
 
 import com.example.notification.dto.SMSDto;
 
+import java.util.UUID;
+
 public interface SMSProducerService {
-    Long send(SMSDto smsDto);
+    UUID send(SMSDto smsDto);
 }

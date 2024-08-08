@@ -1,24 +1,32 @@
 package com.example.notification.models;
 
+import com.example.notification.constants.Elasticsearch;
+import com.example.notification.enums.SMSStatus;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
-@Document(indexName = "sms")
+@Document(indexName = Elasticsearch.INDEX)
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SMSDocument {
+public class SMSDocument implements Serializable {
 
-    private Long id;
+    private UUID id;
     private String phoneNumber;
     private String message;
-    private String status;
+
+    @Enumerated
+    private SMSStatus status;
+
     private Integer failureCode;
     private String failureComments;
     private Date createdAt;

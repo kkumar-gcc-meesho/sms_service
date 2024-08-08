@@ -7,7 +7,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 
 @Entity
@@ -17,17 +19,17 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class SMS {
+public class SMS implements Serializable {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy= GenerationType.UUID)
+    private UUID id;
 
     private String phoneNumber;
     private String message;
 
-    @Builder.Default
-    private String status = SMSStatus.PENDING.toString();
+    @Enumerated
+    private SMSStatus status;
     private Integer failureCode;
     private String failureComments;
 

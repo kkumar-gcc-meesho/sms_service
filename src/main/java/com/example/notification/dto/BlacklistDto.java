@@ -1,11 +1,11 @@
 package com.example.notification.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import com.example.notification.annotations.PhoneNumber;
+import com.example.notification.constants.Message;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Builder
@@ -13,13 +13,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BlacklistDto {
+public class BlacklistDto implements Serializable {
 
-    @NotEmpty(message = "Phone numbers list cannot be empty")
-    @Size(min = 1, message = "At least one phone number is required")
-    private List<
-            @NotBlank(message = "The phone number is required.")
-            @Pattern(regexp = "^(\\+91)?[6-9]\\d{9}$", message = "The phone number is not valid.")
-                    String> phoneNumbers;
+    @NotEmpty(message = Message.ERROR_PHONE_NUMBERS_LIST_EMPTY)
+    @Size(min = 1, message = Message.ERROR_PHONE_NUMBERS_LIST_MIN_SIZE)
+    private List<@PhoneNumber String> phoneNumbers;
 
 }

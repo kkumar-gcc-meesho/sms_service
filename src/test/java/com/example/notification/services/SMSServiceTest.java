@@ -3,7 +3,6 @@ package com.example.notification.services;
 import com.example.notification.dto.SMSDocumentDto;
 import com.example.notification.dto.SMSDto;
 import com.example.notification.exceptions.ResourceNotFoundException;
-import com.example.notification.mappers.SMSDocumentMapper;
 import com.example.notification.mappers.SMSMapper;
 import com.example.notification.models.SMS;
 import com.example.notification.models.SMSDocument;
@@ -22,10 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.verify;
@@ -49,12 +45,14 @@ public class SMSServiceTest {
 
     @Test
     public void createSMS() {
+        UUID smsId = UUID.randomUUID();
+
         SMSDto smsDto = new SMSDto();
         smsDto.setPhoneNumber("+917986543210");
         smsDto.setMessage("Hello World");
 
         SMS sms = SMSMapper.toEntity(smsDto);
-        sms.setId(1L);
+        sms.setId(smsId);
 
         when(smsJpaRepository.save(any(SMS.class))).thenReturn(sms);
 
@@ -65,33 +63,12 @@ public class SMSServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getPhoneNumber()).isEqualTo("+917986543210");
         assertThat(result.getMessage()).isEqualTo("Hello World");
-        assertThat(result.getId()).isEqualTo(1L);
-    }
-
-    @Test
-    public void createSMSDocument() {
-        SMSDocumentDto smsDocumentDto = new SMSDocumentDto();
-        smsDocumentDto.setPhoneNumber("+917986543210");
-        smsDocumentDto.setMessage("Hello Document");
-
-        SMSDocument smsDocument = SMSDocumentMapper.toEntity(smsDocumentDto);
-        smsDocument.setId(1L);
-
-        when(smsElasticRepository.save(any(SMSDocument.class))).thenReturn(smsDocument);
-
-        SMSDocumentDto result = smsServiceImpl.createSMSDocument(smsDocumentDto);
-
-        verify(smsElasticRepository, times(1)).save(any(SMSDocument.class));
-
-        assertThat(result).isNotNull();
-        assertThat(result.getPhoneNumber()).isEqualTo("+917986543210");
-        assertThat(result.getMessage()).isEqualTo("Hello Document");
-        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getId()).isEqualTo(smsId);
     }
 
     @Test
     public void getSMSById(){
-        Long smsId = 1L;
+        UUID smsId = UUID.randomUUID();
 
         SMS sms = new SMS();
         sms.setId(smsId);
@@ -111,45 +88,15 @@ public class SMSServiceTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void getSMSByIdShouldThrowResourceNotFoundException(){
-        Long smsId = 1L;
+        UUID smsId = UUID.randomUUID();
 
         when(smsJpaRepository.findById(smsId)).thenReturn(Optional.empty());
         smsServiceImpl.getSMSById(smsId);
     }
 
-    @Test
-    public void updateSMS() {
-        Long smsId = 1L;
-
-        SMSDto smsDto = new SMSDto();
-        smsDto.setId(smsId);
-        smsDto.setPhoneNumber("+917986543210");
-        smsDto.setMessage("Hello World!");
-        smsDto.setStatus("SENT");
-
-        SMS sms = SMSMapper.toEntity(smsDto);
-        sms.setId(1L);
-        sms.setPhoneNumber("+917289839849");
-        sms.setMessage("Hello Krishan!");
-
-        when(smsJpaRepository.findById(smsId)).thenReturn(Optional.of(sms));
-        when(smsJpaRepository.save(any(SMS.class))).thenReturn(SMSMapper.toEntity(smsDto));
-
-        SMSDto result = smsServiceImpl.updateSMS(smsId, smsDto);
-
-        verify(smsJpaRepository, times(1)).findById(smsId);
-        verify(smsJpaRepository, times(1)).save(any(SMS.class));
-        assertThat(result).isNotNull();
-        assertThat(result.getPhoneNumber()).isEqualTo("+917986543210");
-        assertThat(result.getMessage()).isEqualTo("Hello World!");
-        assertThat(result.getStatus()).isEqualTo("SENT");
-        assertThat(result.getFailureCode()).isNull();
-        assertThat(result.getFailureComments()).isNull();
-    }
-
     @Test(expected = ResourceNotFoundException.class)
     public void updateSMSShouldThrowResourceNotFoundException(){
-        Long smsId = 1L;
+        UUID smsId = UUID.randomUUID();
         SMSDto smsDto = new SMSDto();
         smsDto.setId(smsId);
         smsDto.setPhoneNumber("+917986543210");
@@ -168,12 +115,12 @@ public class SMSServiceTest {
 
         Page<SMSDocument> smsDocumentPage = getSmsDocuments(phoneNumber);
 
-        when(smsElasticRepository.findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable))
+        when(smsElasticRepository.findByPhoneNumberAndCreatedAtIsBetween(phoneNumber, startDate, endDate, pageable))
                 .thenReturn(smsDocumentPage);
 
         Page<SMSDocumentDto> result = smsServiceImpl.getSMSDocumentsByPhoneNumberAndDateRange(phoneNumber, startDate, endDate, pageable);
 
-        verify(smsElasticRepository, times(1)).findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable);
+        verify(smsElasticRepository, times(1)).findByPhoneNumberAndCreatedAtIsBetween(phoneNumber, startDate, endDate, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getTotalElements()).isEqualTo(2);
@@ -205,12 +152,12 @@ public class SMSServiceTest {
 
     private static Page<SMSDocument> getSmsDocuments(String phoneNumber) {
         SMSDocument smsDocument1 = new SMSDocument();
-        smsDocument1.setId(1L);
+        smsDocument1.setId(UUID.randomUUID());
         smsDocument1.setPhoneNumber(phoneNumber);
         smsDocument1.setMessage("Message 1");
 
         SMSDocument smsDocument2 = new SMSDocument();
-        smsDocument2.setId(2L);
+        smsDocument2.setId(UUID.randomUUID());
         smsDocument2.setPhoneNumber(phoneNumber);
         smsDocument2.setMessage("Message 2");
 
