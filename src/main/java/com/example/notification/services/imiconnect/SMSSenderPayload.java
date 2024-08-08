@@ -10,7 +10,7 @@ public class SMSSenderPayload {
     private String message;
     private String correlationId;
 
-    private final String deliveryChannel = "sms";
+    private final String SMS_DELIVERY_CHANNEL = "sms";
 
     public SMSSenderPayload(String phoneNumber, String message, String correlationId) {
         this.phoneNumber = phoneNumber;
@@ -19,23 +19,23 @@ public class SMSSenderPayload {
     }
 
     public JSONObject toJson() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("deliverychannel", deliveryChannel);
+        return new JSONObject()
+                .put("deliverychannel", SMS_DELIVERY_CHANNEL)
+                .put("channels", createChannelsJson())
+                .put("destination", createDestinationJson());
+    }
 
-        JSONObject channels = new JSONObject();
-        JSONObject sms = new JSONObject();
-        sms.put("text", message);
-        channels.put("sms", sms);
+    private JSONObject createChannelsJson() {
+        return new JSONObject()
+                .put("sms", new JSONObject().put("text", message));
+    }
 
-        jsonObject.put("channels", channels);
+    private JSONArray createDestinationJson() {
+        JSONObject destination = new JSONObject()
+                .put("msisdn", new JSONArray().put(phoneNumber))
+                .put("correlationId", correlationId);
 
-        JSONObject destination = new JSONObject();
-        destination.put("msisdn", new JSONArray().put(phoneNumber));
-        destination.put("correlationId", correlationId);
-
-        jsonObject.put("destination", new JSONArray().put(destination));
-
-        return jsonObject;
+        return new JSONArray().put(destination);
     }
 
 }
