@@ -12,7 +12,7 @@ import java.util.UUID;
 @Repository
 public interface SMSElasticRepository extends ElasticsearchRepository<SMSDocument, UUID> {
 
-    Page<SMSDocument> findByPhoneNumberAndCreatedAtBetween(String phoneNumber, Date startDate, Date endDate, Pageable pageable);
+    Page<SMSDocument> findByPhoneNumberAndCreatedAtIsBetween(String phoneNumber, Date startDate, Date endDate, Pageable pageable);
 
     Page<SMSDocument> findByMessageContaining(String message, Pageable pageable);
 

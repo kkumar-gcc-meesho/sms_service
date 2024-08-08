@@ -115,12 +115,12 @@ public class SMSServiceTest {
 
         Page<SMSDocument> smsDocumentPage = getSmsDocuments(phoneNumber);
 
-        when(smsElasticRepository.findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable))
+        when(smsElasticRepository.findByPhoneNumberAndCreatedAtIsBetween(phoneNumber, startDate, endDate, pageable))
                 .thenReturn(smsDocumentPage);
 
         Page<SMSDocumentDto> result = smsServiceImpl.getSMSDocumentsByPhoneNumberAndDateRange(phoneNumber, startDate, endDate, pageable);
 
-        verify(smsElasticRepository, times(1)).findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable);
+        verify(smsElasticRepository, times(1)).findByPhoneNumberAndCreatedAtIsBetween(phoneNumber, startDate, endDate, pageable);
 
         assertThat(result).isNotNull();
         assertThat(result.getTotalElements()).isEqualTo(2);
