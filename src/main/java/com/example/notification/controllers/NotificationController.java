@@ -1,6 +1,7 @@
 package com.example.notification.controllers;
 
 import com.example.notification.annotations.AuthorizationHeader;
+import com.example.notification.constants.APIPath;
 import com.example.notification.constants.Message;
 import com.example.notification.constants.Status;
 import com.example.notification.dto.BlacklistDto;
@@ -23,7 +24,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping(path = "${apiVersion}")
+@RequestMapping(path = APIPath.BASE_PATH_VERSION)
 @AllArgsConstructor
 public class NotificationController {
 
@@ -31,7 +32,7 @@ public class NotificationController {
     private final SMSService smsService;
     private final SMSProducerService smsProducerService;
 
-    @PostMapping("/sms/send")
+    @PostMapping(APIPath.SMS_SEND)
     @AuthorizationHeader
     public ApiResponse<SendSMSData> sendSMS(@Valid @RequestBody SMSDto smsDto) {
         UUID smsId = smsProducerService.send(smsDto);
@@ -42,7 +43,7 @@ public class NotificationController {
                 .build();
     }
 
-    @PostMapping("/blacklist")
+    @PostMapping(APIPath.BLACKLIST)
     @AuthorizationHeader
     public ApiResponse<String> addToBlacklist(@Valid @RequestBody BlacklistDto blacklistDto) {
         blacklistService.addPhoneNumbersToBlacklist(blacklistDto);
@@ -53,7 +54,7 @@ public class NotificationController {
                 .build();
     }
 
-    @DeleteMapping("/blacklist")
+    @DeleteMapping(APIPath.BLACKLIST)
     @AuthorizationHeader
     public ApiResponse<String> removeFromBlacklist(@Valid @RequestBody BlacklistDto blacklistDto) {
         blacklistService.removePhoneNumbersFromBlacklist(blacklistDto);
@@ -64,7 +65,7 @@ public class NotificationController {
                 .build();
     }
 
-    @GetMapping("/blacklist")
+    @GetMapping(APIPath.BLACKLIST)
     @AuthorizationHeader
     public ApiResponse<Set<String>> getAllBlacklistedPhoneNumbers() {
         return ApiResponse.<Set<String>>builder()
@@ -73,7 +74,7 @@ public class NotificationController {
                 .build();
     }
 
-    @GetMapping("/sms/{requestId}")
+    @GetMapping(APIPath.FETCH_SMS_BY_ID)
     @AuthorizationHeader
     public ApiResponse<SMSDto> getSMSById(@PathVariable("requestId") UUID smsId) {
         return ApiResponse.<SMSDto>builder()
@@ -82,7 +83,7 @@ public class NotificationController {
                 .build();
     }
 
-    @GetMapping("/sms/search/phone")
+    @GetMapping(APIPath.SEARCH_SMS_BY_PHONE)
     @AuthorizationHeader
     public Page<SMSDocumentDto> searchSMSDocumentsByPhoneNumberAndDateRange(
             @RequestParam String phoneNumber,
@@ -92,7 +93,7 @@ public class NotificationController {
         return smsService.getSMSDocumentsByPhoneNumberAndDateRange(phoneNumber, startDate, endDate, pageable);
     }
 
-    @GetMapping("/sms/search/message")
+    @GetMapping(APIPath.SEARCH_SMS_BY_MESSAGE)
     @AuthorizationHeader
     public Page<SMSDocumentDto> searchSMSDocumentsByMessageContaining(
             @RequestParam String message,

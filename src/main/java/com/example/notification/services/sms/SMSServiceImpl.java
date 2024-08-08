@@ -68,21 +68,14 @@ public class SMSServiceImpl implements SMSService {
     public Page<SMSDocumentDto> getSMSDocumentsByPhoneNumberAndDateRange(String phoneNumber, Date startDate, Date endDate, Pageable pageable) {
         phoneNumber = standardizePhoneNumber(phoneNumber);
 
-        Page<SMSDocument> smsDocuments;
+        startDate = (startDate != null) ? startDate : new Date(0);
+        endDate = (endDate != null) ? endDate : new Date();
 
-        if (startDate != null && endDate != null) {
-            if (startDate.before(endDate) || startDate.equals(endDate)) {
-                smsDocuments = smsElasticRepository.findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable);
-            } else {
-                throw new IllegalArgumentException(Message.ERROR_START_DATE_AFTER_END_DATE);
-            }
-        } else if (startDate == null && endDate != null) {
-            smsDocuments = smsElasticRepository.findByPhoneNumberAndCreatedAtBefore(phoneNumber, endDate, pageable);
-        } else if (startDate != null) {
-            smsDocuments = smsElasticRepository.findByPhoneNumberAndCreatedAtAfter(phoneNumber, startDate, pageable);
-        } else {
-            smsDocuments = smsElasticRepository.findByPhoneNumber(phoneNumber, pageable);
+        if (startDate.after(endDate)) {
+            throw new IllegalArgumentException(Message.ERROR_START_DATE_AFTER_END_DATE);
         }
+
+        Page<SMSDocument> smsDocuments = smsElasticRepository.findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable);
 
         return smsDocuments.map(SMSDocumentMapper::toDto);
     }
