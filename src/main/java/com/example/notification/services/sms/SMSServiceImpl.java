@@ -75,9 +75,8 @@ public class SMSServiceImpl implements SMSService {
             throw new IllegalArgumentException(Message.ERROR_START_DATE_AFTER_END_DATE);
         }
 
-        Page<SMSDocument> smsDocuments = smsElasticRepository.findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable);
-
-        return smsDocuments.map(SMSDocumentMapper::toDto);
+        return smsElasticRepository.findByPhoneNumberAndCreatedAtBetween(phoneNumber, startDate, endDate, pageable)
+                .map(SMSDocumentMapper::toDto);
     }
 
     @Override
