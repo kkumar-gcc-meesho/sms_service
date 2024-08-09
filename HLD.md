@@ -10,7 +10,7 @@ All requests must include an `Authorization` header with a token(dummy). Without
 
 **Header Example:**
 
-```jsx
+```shell
 Authorization: Bearer YOUR_TOKEN_HERE
 ```
 
@@ -36,7 +36,7 @@ Sends an SMS message to the specified phone number.
 
 **Request Body:**
 
-```jsx
+```json
 {
     "phoneNumber":"+14155552671",
     "message":"ello, Greetings from Meesho.Click here to know more about us:https://meesho.com."
@@ -50,7 +50,7 @@ Sends an SMS message to the specified phone number.
 
 **Response:**
 
-```jsx
+```json
 {
     "status": "success",
     "data": {
@@ -77,7 +77,7 @@ Retrieves the details of a specific SMS request using its ID.
 
 **Response:**
 
-```jsx
+```json
 {
     "status": "success",
     "data": {
@@ -104,15 +104,15 @@ CRUD operations for managing blacklisted phone numbers.
     - **Request Body:**
     -
 
-      ```jsx
-      {
-        "phoneNumbers": ["+14155552671", "9876543210"]
-      }
-      ```
+    ```json
+    {
+      "phoneNumbers": ["+14155552671", "9876543210"]
+    }
+    ```
 
     - **Response:**
 
-        ```jsx
+        ```json
         {
             "status": "success",
             "data": "Successfully blacklisted phone number"
@@ -123,7 +123,7 @@ CRUD operations for managing blacklisted phone numbers.
 - **Read:** `GET /blacklist`
     - **Response:**
 
-        ```jsx
+        ```json
         {
             "status": "success",
             "data": [
@@ -137,7 +137,7 @@ CRUD operations for managing blacklisted phone numbers.
 - **Delete:** `DELETE /blacklist`
     - **Request Body:**
 
-        ```jsx
+        ```json
         {
           "phoneNumbers": ["+14155552671"]
         }
@@ -145,7 +145,7 @@ CRUD operations for managing blacklisted phone numbers.
 
     - **Response:**
 
-        ```jsx
+        ```json
         {
             "status": "success",
             "data": "Successfully whitelisted phone number"
@@ -170,7 +170,7 @@ Searches for SMS messages sent to a specific phone number within a date range.
 
 **Response:**
 
-```jsx
+```json
 {
     "content": [
         {
@@ -208,7 +208,7 @@ Searches for SMS messages containing a specific message.
 
 **Response:**
 
-```jsx
+```json
 {
     "content": [
         {
@@ -246,7 +246,7 @@ All endpoints will return appropriate HTTP status codes and error messages for i
 
 **Error Response Example:**
 
-```jsx
+```json
 {
     "status": "error",
     "error": {
@@ -262,7 +262,7 @@ All endpoints will return appropriate HTTP status codes and error messages for i
 
 **SMS Model:**
 
-```jsx
+```sql
 +------------------+--------------+------+-----+---------+-------+
 | Field            | Type         | Null | Key | Default | Extra |
 +------------------+--------------+------+-----+---------+-------+
@@ -281,7 +281,7 @@ All endpoints will return appropriate HTTP status codes and error messages for i
 
 **Blacklist Model:**
 
-```jsx
+```sql
 +--------------+--------------+------+-----+---------+-------+
 | Field        | Type         | Null | Key | Default | Extra |
 +--------------+--------------+------+-----+---------+-------+
@@ -293,7 +293,7 @@ All endpoints will return appropriate HTTP status codes and error messages for i
 
 **SMSDocument Model:**
 
-```jsx
+```json
 {
   "id": "UUID",
   "phoneNumber": "string",
