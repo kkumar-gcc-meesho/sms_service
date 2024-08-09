@@ -34,7 +34,14 @@ public class SMSConsumerServiceImpl implements SMSConsumerService {
     @Override
     @KafkaListener(topics = Kafka.SMS_TOPIC)
     public void listen(String smsId) throws BlacklistedPhoneNumberException {
-        SMSDto smsDto = smsService.getSMSById(UUID.fromString(smsId));
+        SMSDto smsDto;
+        try{
+            smsDto = smsService.getSMSById(UUID.fromString(smsId));
+        } catch (Exception e) {
+            logger.error(e);
+
+            throw new RuntimeException(e);
+        }
 
         try {
 
